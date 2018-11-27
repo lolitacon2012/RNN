@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack --config webpack.config.js",
-    "babel": "babel rnn.js --out-file compiled.js"
+    "dev": "babel rnn.js --out-file compiled.js && node compiled.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,5 +18,9 @@
     "babel-loader": "^8.0.4",
     "webpack": "^4.26.1",
     "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "mathjs": "^5.2.3",
+    "nlp-corpus": "^3.2.0"
   }
 }
