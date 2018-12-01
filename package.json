@@ -8,7 +8,8 @@
     "webpack": "webpack --config webpack.config.js",
     "dev": "babel rnn.js --out-file compiled.js && node --inspect compiled.js",
     "run": "babel rnn.js --out-file compiled.js && node compiled.js",
-    "gpuTest": "babel gpu_test.js --out-file gpu_test_compiled.js && node gpu_test_compiled.js"
+    "gpuTest": "babel gpu_test.js --out-file gpu_test_compiled.js && node gpu_test_compiled.js",
+    "cgp": "babel cgp.js --out-file cgp_c.js && node cgp_c.js"
   },
   "author": "",
   "license": "ISC",

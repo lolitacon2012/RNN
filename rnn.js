@@ -264,13 +264,11 @@ indexToWord.set(1, "##END");
 wordToIndex.set("##START", 0);
 wordToIndex.set("##END", 1);
 let full_text = [0];
-const generated_training_set = corpus.generate(10000);
-const fake_set = [`the quick brown fox jumps over the lazy dog. the brown dog jumps. fox is quick and dog is lazy. dog is brown. dog is not fox. brown is not quick.`]
-//fake_set above
-const super_fake = ["Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this. But, in a larger sense, we can not dedicate -- we can not consecrate -- we can not hallow -- this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth."]
+const generated_training_set = [`jiang ze min`]
+//corpus.generate(2000);
 
-fake_set.join('\n').split(" ").map((s)=>{
-	s.replace(/[.,<>/?!@"'{}\n;:=+\-_)(*&^%$@)]/g, (a)=>{
+generated_training_set.join('\n').split(" ").map((s)=>{
+	s.replace(/[.,<>/?!@"{}\n;:=+\-_)(*&^%$@)]/g, (a)=>{
 		switch(a){
 			case ".":
 			case "?":
@@ -318,25 +316,51 @@ while(true){
 }
 
 //start training!
-const hidden_dim = 3;
+const hidden_dim = 20;
 const word_dim = indexToWord.size;
 const rnn = new Model();
 console.log(`
 	word size = ${word_dim}`)
 rnn.initialize(word_dim, hidden_dim);
-rnn.train(X_train,Y_train,0.5,10,1);
+rnn.train(X_train,Y_train,1,120,1);
 
-const to_predict = [0, ...fake_set[0].split(" ").map((a)=>{
-	return wordToIndex.get(a)
-})]
-const generate_length_max = 1000;
+const generate_length_max = 500;
 let output_full = [0];
 for(let m=0;m<generate_length_max;m++){
 	const step = rnn.predict([output_full[m]]);
 	output_full.push(step[0]);
 }
-console.log("OUTPUT = " + output_full.map((e)=>{
+output_full = (output_full.map((e)=>{
+	if(e<2){
+		return "";
+	}
 	return indexToWord.get(e);
-}).slice(1).join(" "))
+}).slice(1))
+let no_space = true;
+console.log ( "RESULT = \n" + output_full.map((e)=>{
+	let r = "";
+	switch(e){
+		case ".":
+		case ",":
+		case ":":
+		case ";":
+		case "?":
+		case "!":
+		case ")":
+		case "]":
+			r = e + " ";
+			no_space = true;
+			break;
+		case "\n":
+		case "":
+			r = "";
+		default:
+			r = no_space ? e : (" " + e);
+			if(no_space){
+				no_space = false;
+			}
+	}
+	return r;
+}).join(""));
 
 
